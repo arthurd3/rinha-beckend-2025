@@ -2,6 +2,7 @@ package com.arthur.rinhabeck.usecases;
 
 import com.arthur.rinhabeck.dtos.HealthStatus;
 import com.arthur.rinhabeck.dtos.PaymentRequest;
+import com.arthur.rinhabeck.dtos.PaymentSummaryResponse;
 import com.arthur.rinhabeck.dtos.ProcessorPaymentRequest;
 import com.arthur.rinhabeck.repositories.PaymentRepository;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -54,5 +55,12 @@ public class PaymentService {
         } catch(Exception e) {
             throw new RuntimeException("Payment processing failed", e);
         }
+    }
+
+    public PaymentSummaryResponse getPaymentsSummary(Instant from, Instant to) {
+        var defaultSummary = paymentRepository.getSummaryByProcessorType("default", from, to);
+        var fallbackSummary = paymentRepository.getSummaryByProcessorType("fallback", from, to);
+        
+        return new PaymentSummaryResponse(defaultSummary, fallbackSummary);
     }
 }
