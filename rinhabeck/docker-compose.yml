@@ -67,7 +67,7 @@ services:
   lb:
     image: nginx:1.25-alpine
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./01-nginx.conf:/etc/nginx/01-nginx.conf:ro
     ports:
       - "9999:9999"
     depends_on:

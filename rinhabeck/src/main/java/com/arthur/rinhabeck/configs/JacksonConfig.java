@@ -23,4 +23,5 @@ public class JacksonConfig {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .setTimeZone(TimeZone.getTimeZone("UTC"));
     }
+
 }

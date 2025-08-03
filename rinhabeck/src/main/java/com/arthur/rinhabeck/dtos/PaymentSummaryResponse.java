@@ -1,4 +1,4 @@
-package com.arthur.rinhabeck.dtos.response;
+package com.arthur.rinhabeck.dtos;
 
 import java.math.BigDecimal;
 

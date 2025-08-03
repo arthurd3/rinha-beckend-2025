@@ -1,11 +1,11 @@
-package com.arthur.rinhabeck.dtos.request;
+package com.arthur.rinhabeck.dtos;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
 public record ProcessorPaymentRequest (
-    UUID correlationId,
+    String correlationId,
     BigDecimal amount,
     Instant requestedAt
 ) {}
