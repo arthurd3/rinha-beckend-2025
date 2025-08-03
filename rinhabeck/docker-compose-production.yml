@@ -1,5 +1,4 @@
 # Configurações do Docker Compose para compatibilidade multiplataforma
-version: '3.8'
 
 services:
   nginx:
@@ -24,9 +23,6 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-      platforms:
-        - linux/amd64
-        - linux/arm64
     hostname: api1
     environment:
       - SPRING_PROFILES_ACTIVE=docker
