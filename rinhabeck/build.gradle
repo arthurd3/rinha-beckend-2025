@@ -45,9 +45,6 @@ graalvmNative {
             buildArgs.add('--initialize-at-run-time=org.springframework.data.redis.connection.jedis.JedisConnectionFactory')
             buildArgs.add('--enable-http')
             buildArgs.add('--enable-https')
-            buildArgs.add('--allow-incomplete-classpath')
-            buildArgs.add('--static')
-            buildArgs.add('--libc=musl')
             javaLauncher = javaToolchains.launcherFor {
                 languageVersion = JavaLanguageVersion.of(21)
                 vendor = JvmVendorSpec.matching("GraalVM Community")
