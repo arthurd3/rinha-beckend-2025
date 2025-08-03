@@ -1,6 +1,44 @@
-version: "3.9"
-
 services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api1
+      - api2
+    ports:
+      - "9999:9999"
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "30MB"
+  api1: &api
+    build: .
+    hostname: api1
+    # --- ADIÇÃO IMPORTANTE AQUI ---
+    environment:
+      - PAYMENT_PROCESSOR_DEFAULT_URL=http://payment-processor-default:8080
+      - PAYMENT_PROCESSOR_FALLBACK_URL=http://payment-processor-fallback:8080
+    # -----------------------------
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    networks:
+      - backend
+      - payment-processor
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "90MB"
+  api2:
+    <<: *api
+    hostname: api2
   db:
     image: postgres:16-alpine
     hostname: db
@@ -10,82 +48,32 @@ services:
       - POSTGRES_PASSWORD=123
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d rinha -U admin"]
       interval: 5s
-      timeout: 5s
+      timeout: 3s
       retries: 5
+    networks:
+      - backend
     deploy:
       resources:
         limits:
           cpus: "0.25"
-          memory: "100MB"
-    networks:
-      - rinha-net
-
+          memory: "110MB"
   cache:
     image: redis:7.2-alpine
     hostname: cache
+    networks:
+      - backend
     deploy:
       resources:
         limits:
-          cpus: "0.15"
-          memory: "25MB"
-    networks:
-      - rinha-net
-
-  api01: &api
-    build: .
-    hostname: api01
-    depends_on:
-      db:
-        condition: service_healthy
-      cache:
-        condition: service_started
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/rinha
-      - SPRING_DATASOURCE_USERNAME=admin
-      - SPRING_DATASOURCE_PASSWORD=123
-      - SPRING_DATA_REDIS_HOST=cache
-      - PAYMENT_PROCESSOR_DEFAULT_URL=http://payment-processor-default:8080
-      - PAYMENT_PROCESSOR_FALLBACK_URL=http://payment-processor-fallback:8080
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: "100MB"
-    networks:
-      - rinha-net
-      - payment-processor
-
-  api02:
-    <<: *api
-    hostname: api02
-
-
-  lb:
-    image: nginx:1.25-alpine
-    volumes:
-      - ./01-nginx.conf:/etc/nginx/01-nginx.conf:ro
-    ports:
-      - "9999:9999"
-    depends_on:
-      - api01
-      - api02
-    deploy:
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: "25MB"
-    networks:
-      - rinha-net
-
+          cpus: "0.05"
+          memory: "30MB"
 networks:
-  rinha-net:
+  backend:
     driver: bridge
   payment-processor:
     external: true
-
 volumes:
-  postgres-data:
+  postgres-data: {}

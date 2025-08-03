@@ -1,19 +1,11 @@
-FROM ghcr.io/graalvm/graalvm-community:21 AS builder
+FROM alpine:latest
 
 WORKDIR /app
 
-COPY build.gradle settings.gradle ./
-COPY gradle ./gradle
-COPY gradlew .
-RUN ./gradlew build --no-daemon
-COPY src ./src
+COPY build/native/nativeCompile/rinhabeck .
 
-RUN ./gradlew nativeCompile --no-daemon
-
-FROM scratch
-WORKDIR /app
-
-COPY --from=builder /app/build/native/nativeCompile/rinha-backend .
+RUN chmod +x ./rinhabeck
 
 EXPOSE 8080
-CMD ["./rinha-backend"]
+
+CMD ["./rinhabeck"]
