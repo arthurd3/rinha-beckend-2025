@@ -18,13 +18,11 @@ public class PaymentServiceSimple {
     }
 
     public void processPayment(PaymentRequest request) {
-        // Simplified: always use default processor for now
         String chosenProcessorType = "default";
         
         var processorRequest = new ProcessorPaymentRequest(request.correlationId(), request.amount(), Instant.now());
 
         try {
-            // Simulate successful payment processing
             paymentRepository.save(processorRequest, chosenProcessorType);
         } catch(Exception e) {
             throw new RuntimeException("Payment processing failed", e);

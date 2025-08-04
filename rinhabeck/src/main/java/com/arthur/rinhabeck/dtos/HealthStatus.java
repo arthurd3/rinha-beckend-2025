@@ -13,7 +13,6 @@ public class HealthStatus {
     private int minResponseTime;
     
     public HealthStatus() {
-        // Default constructor for Jackson
     }
     
     public HealthStatus(boolean failing, int minResponseTime) {
