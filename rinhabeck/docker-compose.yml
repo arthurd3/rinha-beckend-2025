@@ -18,11 +18,9 @@ services:
   api1: &api
     build: .
     hostname: api1
-    # --- ADIÇÃO IMPORTANTE AQUI ---
     environment:
       - PAYMENT_PROCESSOR_DEFAULT_URL=http://payment-processor-default:8080
       - PAYMENT_PROCESSOR_FALLBACK_URL=http://payment-processor-fallback:8080
-    # -----------------------------
     depends_on:
       db:
         condition: service_healthy
